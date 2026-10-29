@@ -1,0 +1,32 @@
+<!doctype html><html lang="en"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1"><meta name="theme-color" content="#0a121b"><meta name="description" content="Edit fixed-width input, trace every character to eKapital XML, and understand precisely how to repair errors."><title>eKapital — Your input, explained</title><link rel="stylesheet" href="lab.css"></head><body>
+<header><a class="brand" href="./"><span class="logo">e↗</span><span>eKapital<small>MAPPING LAB</small></span></a><div class="head-context"><i></i> YEAR-END 2026 <span>/</span> FF → XML</div><nav><a href="guide.html">Watch the overview ↗</a><button id="notes">Mapping assumptions</button></nav></header>
+<main>
+<section class="intro"><div><div class="eyebrow">CHANGE THE INPUT. SEE THE CONSEQUENCE.</div><h1>Your input, <em>explained.</em></h1><p>Edit the fixed-width record. Follow its values into XML. See exactly where an error starts—and how to fix it.</p></div><div class="product-picker"><label for="product">SOURCE PRODUCT / LAYOUT</label><select id="product"></select></div></section>
+<div class="scenario-bar"><span>TRY A CASE</span><div id="scenarios"></div><button id="reset" class="subtle">Reset this sample ↺</button></div>
+<div id="caseNote" class="case-note">Start by changing the interest amount. The same source value fills more than one XML element.</div>
+<section class="mapping-workspace">
+ <article class="input-pane"><div class="pane-head"><div><span class="step">01</span><h2>What you wrote</h2></div><span class="format">FIXED-WIDTH INPUT</span></div>
+ <div class="source-top"><span id="recordStatus"></span><div><button id="undo">Undo edit</button><button id="downloadFF">↓ FF</button></div></div>
+ <label class="editor-label" for="record">Edit the complete record <span>spaces are significant · no separators</span></label>
+ <textarea id="record" rows="3" wrap="off" spellcheck="false" autocomplete="off" autocapitalize="off" aria-describedby="recordHelp"></textarea>
+ <p id="recordHelp" class="micro">Exactly 96 characters. Changes apply immediately. Nothing is uploaded or submitted.</p>
+ <div class="section-label">CHARACTER MAP <span>click a character to trace its field · · = a space</span></div>
+ <div class="char-scroll"><div id="characters" class="characters"></div></div>
+ <div id="fieldList" class="field-list"></div>
+ <section class="field-editor"><div class="section-label">EDIT ONE FIELD WITHOUT SHIFTING THE OTHERS</div><div class="field-heading"><h3 id="fieldName"></h3><span id="fieldRange"></span></div><div class="field-input-row"><input id="fieldValue" spellcheck="false" autocomplete="off" autocapitalize="off" aria-label="Raw selected field value"><button id="applyField" class="primary">Apply to input</button></div><div class="field-help"><span id="fieldLength"></span><button id="padField" class="link-button">Fill remaining positions</button></div><p id="rule"></p></section>
+ <section id="errors" class="errors" aria-live="polite"></section>
+ </article>
+ <article class="output-pane"><div class="pane-head"><div><span class="step">02</span><h2>What this creates</h2></div><span class="format">XML OUTPUT</span></div>
+ <div class="output-top"><div id="outputStatus" aria-live="polite"></div><button id="downloadXML">↓ XML file</button></div>
+ <div id="outputMessage" class="output-message"></div>
+ <div class="xml-toolbar"><span><b class="legend-input"></b> from your input <b class="legend-meta"></b> demo metadata</span><button id="jumpOutput" class="link-button">Find selected field ↓</button></div>
+ <div id="xml" class="xml-code" tabindex="0" aria-label="Generated XML; click a mapped element to locate its source"></div>
+ <div id="changes" class="changes"></div>
+ <details class="previous"><summary>Previous valid output <span>comparison only</span></summary><pre id="previousXML"></pre></details>
+ </article>
+</section>
+<section class="trace-section" aria-labelledby="traceTitle"><div class="trace-header"><div><div class="eyebrow">FOCUSED TRANSFORMATION</div><h2 id="traceTitle">How this field becomes XML</h2><p id="traceSummary" class="trace-summary"></p></div><span id="traceStatus" class="trace-status"></span></div><div id="traceDetails" class="trace-details"></div><div id="transformationExplanation" class="transformation-explanation"></div><div id="destinations" class="destinations"></div></section>
+<footer><span>Synthetic layouts · official 2026 XML structure, r28215 · no submission to SKAT</span><a href="guide.html">Original narrated process guide ↗</a></footer>
+</main>
+<dialog id="dialog"><div class="dialog-head"><h2>How this mapping lab works</h2><button id="closeDialog" aria-label="Close">✕</button></div><div id="notesText"></div></dialog><div id="notice" role="status" hidden></div>
+<script type="module" src="lab.js"></script></body></html>

@@ -1,0 +1,37 @@
+WEBVTT
+
+00:00:00.000 --> 00:00:12.000
+Five fixed-width products. One traceable journey from source characters to the right XML structure.
+
+00:00:12.000 --> 00:00:26.000
+Read the product code first. LN selects the loan layout; another product can put the same field elsewhere.
+
+00:00:26.000 --> 00:00:42.000
+Loan interest occupies positions 30–42, inclusive: 13 characters. Padding belongs to the record layout.
+
+00:00:42.000 --> 00:00:56.000
+Remove trailing spaces from the account. Keep the leading zeros: 0001234567 is an identifier.
+
+00:00:56.000 --> 00:01:14.000
+0000000123456 → 1234.56 → 1234,56. The 2026 eKapital amount type uses a comma decimal separator.
+
+00:01:14.000 --> 00:01:26.000
+20240215 becomes 2024-02-15. A date must exist on the calendar; inserting hyphens is not enough.
+
+00:01:26.000 --> 00:01:42.000
+The product mapping selects a reporting category. Each category and income year is reported separately.
+
+00:01:42.000 --> 00:02:00.000
+Fields join their exact XML paths. Account totals and account-period amounts occupy different branches.
+
+00:02:00.000 --> 00:02:20.000
+Watch the layout and target element change across the five products. Pension amounts have their own meaning.
+
+00:02:20.000 --> 00:02:38.000
+A letter O entered the interest field. Follow the error back to the source range, then repair the original value.
+
+00:02:38.000 --> 00:02:52.000
+Source checks → XML schema checks → SKAT processing response. Passing one does not imply passing the next.
+
+00:02:52.000 --> 00:03:00.000
+Product → position → raw value → conversion rule → XML path. Use this trail to explain or diagnose any field.
