@@ -1,9 +1,9 @@
 <!doctype html><html lang="en"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1"><meta name="theme-color" content="#0a121b"><meta name="description" content="Edit fixed-width input, trace every character to eKapital XML, and understand precisely how to repair errors."><title>eKapital — Your input, explained</title><link rel="stylesheet" href="lab.css"></head><body>
-<header><a class="brand" href="./"><span class="logo">e↗</span><span>eKapital<small>MAPPING LAB</small></span></a><div class="head-context"><i></i> YEAR-END 2026 <span>/</span> FF → XML</div><nav><a href="guide.html">Watch the overview ↗</a><button id="notes">Mapping assumptions</button></nav></header>
+<header><a class="brand" href="./"><span class="logo">e↗</span><span>eKapital<small>MAPPING LAB</small></span></a><div class="head-context"><i></i> YEAR-END 2026 <span>/</span> FF → XML</div><nav><a href="massreport.html">MassReport · multiple records ↗</a><a href="guide.html">Watch the overview ↗</a><button id="notes">Mapping assumptions</button></nav></header>
 <main>
 <section class="intro"><div><div class="eyebrow">CHANGE THE INPUT. SEE THE CONSEQUENCE.</div><h1>Your input, <em>explained.</em></h1><p>Edit the fixed-width record. Follow its values into XML. See exactly where an error starts—and how to fix it.</p></div><div class="product-picker"><label for="product">SOURCE PRODUCT / LAYOUT</label><select id="product"></select></div></section>
 <div class="scenario-bar"><span>TRY A CASE</span><div id="scenarios"></div><button id="reset" class="subtle">Reset this sample ↺</button></div>
-<div id="caseNote" class="case-note">Start by changing the interest amount. The same source value fills more than one XML element.</div>
+<div id="caseNote" class="case-note">Start by changing the interest amount. The same source value fills more than one XML element.</div><p class="micro"><a href="massreport.html">Explore MassReport: five source rows → five XML files → one ZIP ↗</a></p>
 <section class="mapping-workspace">
  <article class="input-pane"><div class="pane-head"><div><span class="step">01</span><h2>What you wrote</h2></div><span class="format">FIXED-WIDTH INPUT</span></div>
  <div class="source-top"><span id="recordStatus"></span><div><button id="undo">Undo edit</button><button id="downloadFF">↓ FF</button></div></div>
@@ -30,3 +30,4 @@
 </main>
 <dialog id="dialog"><div class="dialog-head"><h2>How this mapping lab works</h2><button id="closeDialog" aria-label="Close">✕</button></div><div id="notesText"></div></dialog><div id="notice" role="status" hidden></div>
 <script type="module" src="lab.js"></script></body></html>
+
