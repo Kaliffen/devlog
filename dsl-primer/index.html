@@ -1,0 +1,657 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
+<meta name="description" content="A dark-mode tutorial of the game DSL core primitives: snippets, meanings and diagrams.">
+<title>Game DSL Primer</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Instrument+Serif:ital@0;1&family=IBM+Plex+Sans:wght@400;500;600&family=JetBrains+Mono:wght@400;500&display=swap">
+<style>
+/* Layout: a sticky table of contents on the left; each primitive is a lesson of prose, a snippet, and a diagram. Dark only, by design. */
+:root {
+  color-scheme: dark;
+  --bg: #101418;
+  --panel: #161c22;
+  --code-bg: #0b0f13;
+  --rule: #26303a;
+  --fg: #d9dfe4;
+  --muted: #8995a1;
+  --brass: #d1ab62;
+  --teal: #6cc4b8;
+  --rose: #e08a8a;
+  --violet: #a99be6;
+  --comment: #66737f;
+  --display: "Instrument Serif", "Iowan Old Style", Georgia, serif;
+  --body: "IBM Plex Sans", system-ui, -apple-system, "Segoe UI", sans-serif;
+  --mono: "JetBrains Mono", ui-monospace, "Cascadia Code", Consolas, monospace;
+}
+* { box-sizing: border-box; }
+body {
+  margin: 0;
+  background: var(--bg);
+  color: var(--fg);
+  font: 15px/1.6 var(--body);
+}
+.page {
+  display: grid;
+  grid-template-columns: 220px minmax(0, 1fr);
+  gap: 48px;
+  max-width: 1240px;
+  margin: 0 auto;
+  padding-block: 40px 80px;
+  padding-left: max(16px, env(safe-area-inset-left, 0px));
+  padding-right: max(16px, env(safe-area-inset-right, 0px));
+}
+nav {
+  position: sticky;
+  top: calc(env(safe-area-inset-top, 0px) + 24px);
+  align-self: start;
+  display: grid;
+  gap: 2px;
+  font-size: 13px;
+}
+nav .label {
+  font-size: 11px;
+  letter-spacing: .12em;
+  text-transform: uppercase;
+  color: var(--muted);
+  margin-bottom: 8px;
+}
+nav a {
+  color: var(--muted);
+  text-decoration: none;
+  padding: 4px 0 4px 12px;
+  border-left: 1px solid var(--rule);
+  display: flex;
+  gap: 8px;
+}
+nav a span { font-family: var(--mono); font-size: 11px; color: var(--comment); padding-top: 2px; min-width: 18px; }
+nav a:hover, nav a:focus-visible { color: var(--fg); border-left-color: var(--brass); outline: none; }
+main { min-width: 0; display: grid; gap: 72px; }
+header { display: grid; gap: 16px; max-width: 68ch; }
+.eyebrow { font-size: 11px; letter-spacing: .14em; text-transform: uppercase; color: var(--brass); }
+h1 {
+  font: 400 clamp(40px, 6vw, 64px)/1.02 var(--display);
+  margin: 0;
+  text-wrap: balance;
+}
+h1 em { color: var(--brass); }
+header p { margin: 0; color: var(--muted); font-size: 16px; }
+.lesson { display: grid; gap: 20px; scroll-margin-top: 24px; }
+.lesson-head { display: flex; align-items: baseline; gap: 16px; border-top: 1px solid var(--rule); padding-top: 20px; }
+.num { font-family: var(--mono); font-size: 12px; color: var(--brass); }
+h2 { font: 400 34px/1.1 var(--display); margin: 0; text-wrap: balance; }
+h2 code { font-family: var(--mono); font-size: 15px; color: var(--teal); margin-left: 12px; vertical-align: middle; }
+.lede { margin: 0; max-width: 68ch; font-size: 16px; }
+.lede b { color: var(--brass); font-weight: 500; }
+.pair { display: grid; grid-template-columns: minmax(0, 1.25fr) minmax(0, 1fr); gap: 20px; align-items: start; }
+.pair > * { min-width: 0; }
+pre.code {
+  margin: 0;
+  background: var(--code-bg);
+  border: 1px solid var(--rule);
+  border-radius: 6px;
+  padding: 16px 18px;
+  overflow-x: auto;
+  font: 12.5px/1.65 var(--mono);
+  color: var(--fg);
+  tab-size: 4;
+}
+.tok-c { color: var(--comment); font-style: italic; }
+.tok-s { color: var(--rose); }
+.tok-k { color: var(--violet); }
+.tok-m { color: var(--brass); }
+.tok-t { color: var(--teal); }
+.tok-n { color: var(--rose); }
+figure { margin: 0; background: var(--panel); border: 1px solid var(--rule); border-radius: 6px; padding: 16px; overflow-x: auto; }
+figure pre.mermaid { margin: 0; display: flex; justify-content: center; background: transparent; color: var(--muted); font-size: 12px; }
+figcaption { font-size: 12px; color: var(--muted); margin-top: 10px; }
+ul.rules { margin: 0; padding: 0; list-style: none; display: grid; gap: 6px; max-width: 72ch; }
+ul.rules li { padding-left: 18px; position: relative; color: var(--muted); }
+ul.rules li::before { content: "›"; position: absolute; left: 2px; color: var(--brass); }
+ul.rules code, .lede code, p code { font-family: var(--mono); font-size: 12.5px; color: var(--teal); }
+.chips { display: grid; grid-template-columns: repeat(auto-fill, minmax(180px, 1fr)); gap: 8px; }
+.chip { background: var(--panel); border: 1px solid var(--rule); border-radius: 4px; padding: 10px 12px; display: grid; gap: 2px; }
+.chip code { font-family: var(--mono); font-size: 12.5px; color: var(--brass); }
+.back { max-width: 1240px; margin: 0 auto; padding: 20px max(16px, env(safe-area-inset-right, 0px)) 0 max(16px, env(safe-area-inset-left, 0px)); font-size: 13px; }
+.back a { color: var(--muted); text-decoration: none; }
+.back a:hover { color: var(--brass); }
+.chip span { font-size: 12.5px; color: var(--muted); }
+.callout { border-left: 2px solid var(--teal); padding: 4px 0 4px 16px; color: var(--muted); max-width: 72ch; margin: 0; }
+.callout b { color: var(--fg); font-weight: 500; }
+@media (max-width: 900px) {
+  .page { grid-template-columns: minmax(0, 1fr); gap: 32px; }
+  nav { position: static; grid-template-columns: repeat(auto-fill, minmax(150px, 1fr)); }
+  .pair { grid-template-columns: minmax(0, 1fr); }
+}
+@media (prefers-reduced-motion: reduce) { html { scroll-behavior: auto; } }
+html { scroll-behavior: smooth; }
+</style>
+</head>
+<body>
+<p class="back"><a href="../">← Devlog</a></p>
+
+<div class="page">
+<nav aria-label="Lessons">
+  <div class="label">Lessons</div>
+  <a href="#idea"><span>00</span>The idea</a>
+  <a href="#entities"><span>01</span>Entities</a>
+  <a href="#identity"><span>02</span>Identity</a>
+  <a href="#values"><span>03</span>Resources &amp; relations</a>
+  <a href="#params"><span>04</span>Named numbers</a>
+  <a href="#flows"><span>05</span>Flows</a>
+  <a href="#pressures"><span>06</span>Pressures</a>
+  <a href="#events"><span>07</span>Events</a>
+  <a href="#decisions"><span>08</span>Decisions</a>
+  <a href="#traits"><span>09</span>Traits</a>
+  <a href="#ai"><span>10</span>Concerns &amp; mind</a>
+  <a href="#endings"><span>11</span>Endings</a>
+  <a href="#situations"><span>12</span>Situations</a>
+  <a href="#turn"><span>13</span>The turn</a>
+  <a href="#effects"><span>14</span>Effects &amp; conditions</a>
+</nav>
+
+<main>
+<header>
+  <div class="eyebrow">game-dsl · a primer</div>
+  <h1>Say <em>what</em> and <em>when</em>.<br>The model does the how.</h1>
+  <p>A tour of the primitives you write a game with. Every snippet is taken from Chicago, 1923, the first game written in the language: rackets, crews, heat and the police.</p>
+</header>
+
+<!-- 00 -->
+<section class="lesson" id="idea">
+  <div class="lesson-head"><span class="num">00</span><h2>The idea</h2></div>
+  <p class="lede">A game definition is <b>a C# expression that builds data</b>. Every lambda runs once, when the definition is built, against scope objects whose members produce expression trees. Nothing reads game state. The result is a <code>Model</code>, and several consumers read that one model.</p>
+  <div class="pair">
+<pre class="code"><script type="text/plain" class="snip">public static readonly GameDefinition Game = Define.Game("Chicago, 1923")
+    .Weeks(52)
+    .Entity<Outfit>()
+    .Entity<Gangster>()
+    .Role<Lieutenant>(Gangster.Where(g => g.IsLieutenant))
+    .Resource(Cash)
+    .Flow(Protection) /* ... */
+    .Pressure(Unpaid) /* ... */
+    .Event(PoliceRaid) /* ... */
+    .Decision<Actor>(PayOff) /* ... */
+    .Ending(TheCityIsYours) /* ... */;</script></pre>
+    <figure>
+<pre class="mermaid">
+%%{init: {'theme':'dark'}}%%
+flowchart LR
+  R["Rules.cs<br/>the definition"] --> M[("Model<br/>plain data")]
+  S["Situations.cs<br/>a starting world"] --> M
+  M --> C["Checker<br/>findings in domain terms"]
+  M --> E["Engine<br/>runs the turns"]
+  E --> P["Play window<br/>menus, prompts, ledger"]
+  E --> Sim["Simulator<br/>100 seeds on weights"]
+</pre>
+      <figcaption>One model, many readers. A window never names a game concept; it lists what the engine exposes.</figcaption>
+    </figure>
+  </div>
+  <p class="callout"><b>The rule of thumb:</b> a scenario never says how something happens. If you find yourself writing a loop or a flag, the mechanism belongs in the model as a named concept.</p>
+</section>
+
+<!-- 01 -->
+<section class="lesson" id="entities">
+  <div class="lesson-head"><span class="num">01</span><h2>Entities and vocabulary <code>Attr · Named · Rel</code></h2></div>
+  <p class="lede">A kind of thing is a class. <b><code>Attr&lt;T&gt;()</code> is stored state</b>; any other property is derived. Wrap a derived property in <code>Named(...)</code> and it becomes part of the game's <b>vocabulary</b>: explanations say "it is guarded" instead of spelling out the expression, and every entity sheet lists it with its definition.</p>
+  <div class="pair">
+<pre class="code"><script type="text/plain" class="snip">[Public]
+public sealed class Outfit : Entity, IBind<Outfit>
+{
+    // stored
+    public Boss Boss    => Attr<Boss>();
+    public Res  Heat    => Attr<Res>();
+
+    // a relation to another outfit, on a scale
+    public Level<Stance> Attitude(Outfit toward) => RelLevel<Stance>(toward);
+
+    // vocabulary: derived, named, explained
+    public Many<Territory> Territories =>
+        Named(Territory.Where(t => t.Holder.Is(this)));
+    public Many<Outfit> Rivals =>
+        Named(Where(r => r.IsNot(this)));
+}
+
+// a role is a typed subset of a kind
+.Role<Lieutenant>(Gangster.Where(g => g.IsLieutenant))</script></pre>
+    <figure>
+<pre class="mermaid">
+%%{init: {'theme':'dark'}}%%
+classDiagram
+  class Outfit {
+    Boss Boss
+    Res Heat
+    Res Attention
+    Attitude(Outfit) Stance
+    Territories
+    Rivals
+  }
+  class Gangster {
+    Outfit Outfit
+    Rank Rank
+    Count Muscle
+    Actor Patron
+    LoyaltyTo(Actor) Rel
+    IsSoldier
+  }
+  class Territory {
+    Outfit Holder
+    Actor Runner
+    Count Extorted
+    Guarded
+  }
+  Gangster --> Outfit : outfit
+  Territory --> Outfit : holder
+  Gangster <|-- Lieutenant : role
+  Gangster <|-- Boss : role
+</pre>
+      <figcaption>Stored attributes and references; the named vocabulary sits on the same classes.</figcaption>
+    </figure>
+  </div>
+</section>
+
+<!-- 02 -->
+<section class="lesson" id="identity">
+  <div class="lesson-head"><span class="num">02</span><h2>Identity <code>Ref · Id</code></h2></div>
+  <p class="lede">A display name is <b>written exactly once</b>, where its identity is declared. Everything else points at the identity, so a typo is a compile error and a test makes sure no name is declared twice. Resources and relations need no name; they take it from the member that reads them.</p>
+  <div class="pair">
+<pre class="code"><script type="text/plain" class="snip">// in the rules
+public static readonly EventRef    SitDown = Event("sit-down");
+public static readonly DecisionRef PayOff  = Decision("pay off");
+public static readonly TraitRef    Hothead = Trait("Hothead");
+public static readonly ResourceRef Heat    = Resource((Outfit o) => o.Heat);
+public static readonly RelationRef Loyalty =
+    Relation((Gangster g, Actor a) => g.LoyaltyTo(a));
+
+// in a situation
+public static readonly Id<Gangster> Capone = new("Al Capone");
+
+// everywhere else: the reference, never the string
+Fire(SitDown, on: Pair(t.Holder, Source.Actor.Outfit))</script></pre>
+    <figure>
+<pre class="mermaid">
+%%{init: {'theme':'dark'}}%%
+flowchart LR
+  N["'sit-down'<br/>written once"] --> Ref["EventRef SitDown"]
+  Ref --> A[".Event&lt;OutfitPair&gt;(SitDown)"]
+  Ref --> B["Fire(SitDown, ...)"]
+  Ref --> C[".Raised(RequestASitDown, ...)"]
+</pre>
+      <figcaption>The string lives in one place; the compiler checks every other use.</figcaption>
+    </figure>
+  </div>
+</section>
+
+<!-- 03 -->
+<section class="lesson" id="values">
+  <div class="lesson-head"><span class="num">03</span><h2>Resources and relations <code>Resource · Relation</code></h2></div>
+  <p class="lede">A <b>resource</b> is a quantity one kind of entity holds. A <b>relation</b> is a directed value from one entity to another: a number, a level on a scale, or a yes/no. Either can be bounded and can drift on its own when nothing else moves it.</p>
+  <div class="pair">
+<pre class="code"><script type="text/plain" class="snip">.Resource(Cash)
+.Resource(Respect).Bounded(0, 100).Drifts(toward: 20, perWeek: 1)   // a reputation fades
+.Resource(Heat).Bounded(0, 100).Drifts(toward: 0, perWeek: 2)
+
+.Relation(Loyalty).Bounded(0, 100).Default(75)                       // to a patron, not an outfit
+.Relation(Attitude).Default(Wary).Drifts(toward: Wary, chancePerWeek: 0.1)
+.Relation(OnPayroll).Pairs<Payroll>()                                // yes/no, enumerable as pairs</script></pre>
+    <figure>
+<pre class="mermaid">
+%%{init: {'theme':'dark'}}%%
+flowchart LR
+  G(["Gangster"]) -- "loyalty 0..100" --> A(["Actor"])
+  O1(["Outfit"]) -- "attitude<br/>Hostile · Wary · Friendly" --> O2(["Outfit"])
+  Of(["Official"]) -- "on payroll: yes/no" --> A
+  O1 -. "heat drifts to 0, 2 a week" .-> O1
+</pre>
+      <figcaption>A scale drifts by chance, one step at a time; a number drifts by an amount each week.</figcaption>
+    </figure>
+  </div>
+</section>
+
+<!-- 04 -->
+<section class="lesson" id="params">
+  <div class="lesson-head"><span class="num">04</span><h2>Named numbers <code>Tune · Param</code></h2></div>
+  <p class="lede">Numbers are written where they are used. A number that <b>several rules share</b>, or that a situation may set differently, becomes a <code>Param</code>. A <code>Param</code> can go anywhere a number can, and explanations print it with its name: "above 60 (hot heat)".</p>
+<pre class="code"><script type="text/plain" class="snip">public static readonly Param HotHeat  = Tune("hot heat", 60);     // the police start raiding
+public static readonly Param WarChest = Tune("a war chest", 1_000);
+
+.On(Territory.Where(t => t.Held & t.Holder.Heat.Above(HotHeat)))   // used in a rule
+.Requires(t => t.Runner.Cash.AtLeast(WarChest))
+
+Situation.Over(Game).Tune(HotHeat, 55)                              // a touchier police force this year</script></pre>
+</section>
+
+<!-- 05 -->
+<section class="lesson" id="flows">
+  <div class="lesson-head"><span class="num">05</span><h2>Flows <code>Flow</code></h2></div>
+  <p class="lede">A flow is a <b>transfer that runs every turn</b> for each subject. Declare it once and it runs for every outfit, nation or household that matches. It moves an amount from a source to a target, and may <b>draw</b> or <b>relieve</b> some other value on the side.</p>
+  <div class="pair">
+<pre class="code"><script type="text/plain" class="snip">.Flow(Protection)
+    .For(each: Territory.Where(t => t.Runner.Exists))
+    .Involves(t => [t.Posted, t.Runner])
+    .From(Outside).To(t => t.Runner.Cash)
+    .Amount(ProtectionRate).Per(t => t.Extorted)
+        .Scaled(by: t => t.Wealth).Scaled(by: t => t.Control)
+    .Draws(t => t.Holder.Heat, 2).When(t => !t.Laundered)
+
+.Flow(Wages)
+    .For(each: Gangster.Where(g => g.Patron.Exists))
+    .From(g => g.Patron.Cash).To(Outside)
+    .Amount(g => g.Wage)
+    .MayFallShort()        // then g.Flow(Wages).Short holds this week</script></pre>
+    <figure>
+<pre class="mermaid">
+%%{init: {'theme':'dark'}}%%
+flowchart LR
+  Out(["Outside<br/>the businesses"]) -- "40 × extorted<br/>× wealth × control" --> Cash["runner's cash"]
+  Cash -- "wage" --> Out2(["Outside"])
+  Prot{{"protection"}} -. "draws 2" .-> Heat["holder's heat"]
+</pre>
+      <figcaption>A source that cannot cover the amount pays nothing and is marked short; pressures can read that.</figcaption>
+    </figure>
+  </div>
+</section>
+
+<!-- 06 -->
+<section class="lesson" id="pressures">
+  <div class="lesson-head"><span class="num">06</span><h2>Pressures <code>Pressure</code></h2></div>
+  <p class="lede">A pressure is <b>a slow squeeze</b>. While its condition holds, it wears a value down each turn. When the value reaches its floor, something happens. This is how a game builds tension without timers or flags.</p>
+  <div class="pair">
+<pre class="code"><script type="text/plain" class="snip">.Pressure(Unpaid)
+    .On(Gangster.Where(g => g.Flow(Wages).Short))
+    .Erodes(g => g.Loyalty, perWeek: 12)
+    .Until(g => !g.Flow(Wages).Short)
+    .AtFloor(g => Fire(Defection, on: g))
+
+.Pressure(Encroachment)
+    .On(Territory.Where(t => t.Held & !t.Guarded
+        & t.Borders.Any(n => n.Holder.IsNot(t.Holder) & n.Guarded)))
+    .Erodes(t => t.Control, perWeek: 0.05)
+    .Until(t => t.Guarded)
+    .AtFloor(t => Transfer(t, to: /* strongest guarded neighbour */))</script></pre>
+    <figure>
+<pre class="mermaid">
+%%{init: {'theme':'dark'}}%%
+stateDiagram-v2
+  [*] --> Paid
+  Paid --> Unpaid : wages fall short
+  Unpaid --> Unpaid : loyalty −12 a week
+  Unpaid --> Paid : wages paid again
+  Unpaid --> Defects : loyalty reaches 0
+  Defects --> [*] : fires 'defection'
+</pre>
+      <figcaption>Every pressure states four things: when it applies, what it erodes, what lifts it, and what happens at the floor.</figcaption>
+    </figure>
+  </div>
+</section>
+
+<!-- 07 -->
+<section class="lesson" id="events">
+  <div class="lesson-head"><span class="num">07</span><h2>Events and options <code>Event · Option</code></h2></div>
+  <p class="lede">An event either <b>rolls each turn</b> for subjects that match its condition, or is <b>raised</b> by a decision, a pressure or another event. If it has options, its chooser picks one. The human gets a prompt and the AI picks by weight. One option must always be available, so nobody gets stuck.</p>
+  <div class="pair">
+<pre class="code"><script type="text/plain" class="snip">.Event(PoliceRaid)
+    .On(Territory.Where(t => t.Held & t.Holder.Heat.Above(HotHeat)))
+    .Likelihood(0.1).More(by: t => t.Holder.Heat)
+    .ChosenBy(t => t.Runner)
+    .Option("take the loss")
+        .Effect(t => [t.Extorted.Down(4), t.Holder.Heat.Down(10)])
+        .Weight(4)
+    .Option("pay the captain")
+        .Requires(t => t.Runner.Cash.AtLeast(WarChest))
+        .Effect(t => [t.Runner.Cash.Down(WarChest), t.Holder.Heat.Down(5)])
+        .Weight(4)
+    .Option("shoot it out")
+        .Requires(t => t.Guarded)
+        .Draws(t => t.Holder.Heat, 20).As(Violence)
+        .Weight(2).More(50.Percent(), when: t => t.Posted.Any(g => g.Has(Hothead)))</script></pre>
+    <figure>
+<pre class="mermaid">
+%%{init: {'theme':'dark'}}%%
+flowchart TD
+  C{"held, and heat<br/>above hot heat?"} -- yes --> L["roll 0.1,<br/>more the hotter"]
+  L -- hit --> Ch["the runner chooses"]
+  Ch --> O1["take the loss<br/>always available"]
+  Ch --> O2["pay the captain<br/>needs a war chest"]
+  Ch --> O3["shoot it out<br/>needs a guard"]
+  O3 -. "violence" .-> H["heat +20"]
+</pre>
+      <figcaption>Weights are relative. <code>More</code> and <code>Less</code> bend them by a percentage when a condition holds.</figcaption>
+    </figure>
+  </div>
+</section>
+
+<!-- 08 -->
+<section class="lesson" id="decisions">
+  <div class="lesson-head"><span class="num">08</span><h2>Decisions <code>Decision · Choose · Standing</code></h2></div>
+  <p class="lede">A decision is <b>something an actor can do</b>. <code>Choose</code> lists what it can be done to, and <code>Requires</code> says when it is allowed. A <b>personal act</b> happens once. A <b>standing order</b> assigns a person and keeps working every turn until it is replaced or lapses. The menu, the reasons a choice is refused, and the AI's choices all come from these declarations.</p>
+  <div class="pair">
+<pre class="code"><script type="text/plain" class="snip">// a personal act
+.Decision<Actor>(PayOff)
+    .Choose(a => Official.Where(o => !o.Payroll(a) & o.Beat.Overlaps(a.Territories)))
+    .Requires((a, o) => a.Cash.AtLeast(WarChest))
+    .Effect((a, o) => [o.Payroll(a).Set(true), o.Disposition(a.Outfit).Up()])
+    .Serves(Cool)
+    .Weight(2).More(50.Percent(), when: (a, o) => a.Outfit.Heat.Above(HotHeat))
+
+// a standing order: heal, and draw nothing
+.Decision<Actor>(LieLow)
+    .Choose(a => a.Men)
+    .Standing()
+    .Effect((a, g) => g.Posting.Clear())
+    .Weekly((a, g) => When(g.State.Is(Wounded), g.State.Set(Active)))
+    .Relieves((a, g) => a.Outfit.Heat, 2)
+    .Serves(Cool, Discretion)</script></pre>
+    <figure>
+<pre class="mermaid">
+%%{init: {'theme':'dark'}}%%
+flowchart TD
+  Ch["Choose<br/>officials on my beat"] --> Rq{"Requires<br/>cash ≥ war chest"}
+  Rq -- no --> Why["shown in the menu<br/>with the reason in words"]
+  Rq -- yes --> Pick["human clicks, or<br/>AI scores weight × concerns"]
+  Pick --> Eff["Effect runs once"]
+  Pick -. "Standing()" .-> Ord["order holds:<br/>Effect on start, Weekly each turn,<br/>Leaving when it ends"]
+</pre>
+      <figcaption>A personal act runs once. A standing order is a job, and its first choice is the person who does it.</figcaption>
+    </figure>
+  </div>
+</section>
+
+<!-- 09 -->
+<section class="lesson" id="traits">
+  <div class="lesson-head"><span class="num">09</span><h2>Traits and involvement <code>Trait · Modifies · Involves</code></h2></div>
+  <p class="lede">A trait says <b>what it bends</b>, and by how much. It does not say when it applies. That comes from the mechanic: every flow, event or decision says <b>whom it involves</b>, and a trait counts only while its carrier is involved. Percentages add up, then apply to the base.</p>
+  <div class="pair">
+<pre class="code"><script type="text/plain" class="snip">.Trait<Gangster>(Hothead)
+    .Modifies(Heat.DrawnBy(Violence), Up, 50.Percent())
+    .Modifies(Respect.DrawnBy(Violence), Up, 25.Percent())
+    .Modifies(GoAfter.Weight, Up, 50.Percent())
+
+.Trait<Gangster>(Bookkeeper)
+    .Modifies(Protection.Amount, Up, 10.Percent())
+        .While((Gangster g, Territory at) => g.Doing(KeepBooks) & g.Patron.Is(at.Runner))
+
+.Trait<Gangster>(MadeMan)
+    .Guards(Dismiss, unless: (Lieutenant l) => l.Favor.AtLeast(75))
+
+// the mechanic names who is involved
+.Flow(Protection).Involves(t => [t.Posted, t.Runner, t.Runner.Men.Where(m => m.Doing(KeepBooks))])</script></pre>
+    <figure>
+<pre class="mermaid">
+%%{init: {'theme':'dark'}}%%
+flowchart LR
+  T["Bookkeeper<br/>+10% protection"] --> Q{"carrier involved<br/>in this flow?"}
+  Q -- "yes, and While holds" --> A["amount × 1.10"]
+  Q -- no --> B["base amount"]
+</pre>
+      <figcaption>Aspects a modifier can reach: a flow's Amount, an event's Likelihood, a decision's Weight or Effect, a pressure's Rate, a relation's Erosion, a resource DrawnBy a cause.</figcaption>
+    </figure>
+  </div>
+</section>
+
+<!-- 10 -->
+<section class="lesson" id="ai">
+  <div class="lesson-head"><span class="num">10</span><h2>Concerns and mind <code>Concern · Mind</code></h2></div>
+  <p class="lede">The AI has no script. A <b>concern</b> is something an actor wants kept within bounds. Decisions say which concerns they <code>Serve</code>, and the further a concern is from satisfied, the harder it pulls on their scores. A <b>mind</b> sets how well the actor plays: how competent, how bold, how steady.</p>
+  <div class="pair">
+<pre class="code"><script type="text/plain" class="snip">.Concern<Actor>(Cool)
+    .Measure(a => a.Outfit.Heat).WantsAtMost(40).Over(30).Weighs(50.Percent())
+.Concern<Actor>(Solvency)
+    .Measure(a => a.Cash).WantsAtLeast(WarChest).Over(1_000).Weighs(50.Percent())
+.Concern<Actor>(Coverage)
+    .Measure(a => a.Territories.Where(t => !t.Guarded).Count).WantsNone().Over(2)
+
+.Mind<Actor>()
+    .Competence(a => a.Brains, outOf: 10)    // picks the best, or rolls
+    .Boldness(a => a.Muscle, outOf: 10)      // takes the violent option</script></pre>
+    <figure>
+<pre class="mermaid">
+%%{init: {'theme':'dark'}}%%
+flowchart LR
+  H["heat 70<br/>wants at most 40"] --> D["cool: fully worried"]
+  D -- "pulls on" --> P["pay off<br/>Serves(Cool)"]
+  D -- "pulls on" --> L["lie low<br/>Serves(Cool, Discretion)"]
+  P --> S["score = weight<br/>× concern pull<br/>× boldness"]
+  L --> S
+</pre>
+      <figcaption>The same concerns let a window show the player what they are worried about.</figcaption>
+    </figure>
+  </div>
+</section>
+
+<!-- 11 -->
+<section class="lesson" id="endings">
+  <div class="lesson-head"><span class="num">11</span><h2>Endings <code>Ending</code></h2></div>
+  <p class="lede">An ending is either <b>checked every turn</b> against a condition, or <b>raised</b> by an effect. It is a victory or a defeat for its subject, and everyone else gets the opposite. The window can show how far the player is from each ending, and what works toward it.</p>
+<pre class="code"><script type="text/plain" class="snip">.Ending(TheCityIsYours)
+    .When(Outfit.Where(o => o.Territories.Count.AtLeast(4)))
+    .At(Week.Last)
+    .Victory()
+
+.Ending(Broke)
+    .When(Actor.Where(a => a.Cash.AtFloor.For(Weeks(3))))   // held for three weeks running
+    .Defeat()
+
+.Ending<Outfit>(Indicted)
+    .Raised(by: FederalIndictment)
+    .Defeat()</script></pre>
+</section>
+
+<!-- 12 -->
+<section class="lesson" id="situations">
+  <div class="lesson-head"><span class="num">12</span><h2>Situations <code>Situation.Over</code></h2></div>
+  <p class="lede">The rules are mechanism. A <b>situation</b> is content: a concrete starting world with literal values, tuned numbers, and the seat the human plays. A game can have many situations. Short helper methods keep them readable, and they only call the generic <code>Create</code>, <code>Set</code>, <code>Relate</code> and <code>Give</code>.</p>
+  <div class="pair">
+<pre class="code"><script type="text/plain" class="snip">public static readonly Situation Start = Situation.Over(Game).Named("Torrio's lieutenant, 1923")
+    .Tune(HotHeat, 55)
+    .Tune(BeerPrice, 600)
+
+    .Outfit(Torrio, boss: JohnnyTorrio)
+    .Gangster(Sal,    Torrio, Rank.Lieutenant, muscle: 5, brains: 6, wage: 0)
+    .Gangster(Capone, Torrio, Rank.Lieutenant, muscle: 7, brains: 7, wage: 0,
+              traits: [Ambitious, Hothead])
+    .Gangster(McGurn, Torrio, Rank.Soldier,    muscle: 8, brains: 3, wage: 200,
+              traits: [Hothead], patron: Sal)
+
+    .Attitude(Torrio, Gennas, Friendly)        // the 1920 deal still holds
+    .Favor(JohnnyTorrio, Sal, 55)
+
+    .PlayedBy(Sal);</script></pre>
+    <figure>
+<pre class="mermaid">
+%%{init: {'theme':'dark'}}%%
+flowchart TD
+  Rules["Rules<br/>same for every world"] --> S1["Torrio's lieutenant, 1923"]
+  Rules --> S2["another year,<br/>another seat"]
+  S1 --> Ck["Checker: every reference exists,<br/>every value is on its scale"]
+</pre>
+      <figcaption>A situation passes the checker too. It never adds mechanism.</figcaption>
+    </figure>
+  </div>
+</section>
+
+<!-- 13 -->
+<section class="lesson" id="turn">
+  <div class="lesson-head"><span class="num">13</span><h2>The turn</h2></div>
+  <p class="lede">You never write a game loop. The engine runs <b>the same order every turn</b>, for every game. You only declare things, and the engine decides when each one runs.</p>
+  <figure>
+<pre class="mermaid">
+%%{init: {'theme':'dark'}}%%
+flowchart LR
+  D["1 · Decisions<br/>human, then AI actors"] --> O["2 · Orders<br/>weekly work, lapses"]
+  O --> F["3 · Flows<br/>in declaration order"]
+  F --> P["4 · Pressures<br/>erode, floors fire"]
+  P --> E["5 · Events<br/>roll, queue, choose"]
+  E --> Dr["6 · Drift & timers"]
+  Dr --> En["7 · Endings<br/>ledger closes"]
+  En -. "next turn" .-> D
+</pre>
+    <figcaption>Every change lands in the ledger with the mechanic that caused it. That is how the window can explain what happened this turn.</figcaption>
+  </figure>
+</section>
+
+<!-- 14 -->
+<section class="lesson" id="effects">
+  <div class="lesson-head"><span class="num">14</span><h2>Effects and conditions</h2></div>
+  <p class="lede">Effects are <b>a closed set</b> that the checker knows completely. If an effect you need doesn't exist, that's a missing domain concept: add it to the model and log the gap in the backlog. Don't build it out of loops.</p>
+  <div class="chips">
+    <div class="chip"><code>x.Up(n) · x.Down(n)</code><span>change a number or step a level</span></div>
+    <div class="chip"><code>x.Set(v).For(Weeks(4))</code><span>set, and revert later</span></div>
+    <div class="chip"><code>x.Scale(0.5)</code><span>multiply a value</span></div>
+    <div class="chip"><code>ref.Set(e) · ref.Clear()</code><span>point a reference</span></div>
+    <div class="chip"><code>Fire(event, on:)</code><span>queue an event this turn</span></div>
+    <div class="chip"><code>Take(decision, by:, ...)</code><span>act as if chosen</span></div>
+    <div class="chip"><code>Chance(p, effect)</code><span>counted, seeded dice</span></div>
+    <div class="chip"><code>When · All · set.Each</code><span>combine effects</span></div>
+    <div class="chip"><code>Let(sel, x =&gt; ...)</code><span>pick once, then change it</span></div>
+    <div class="chip"><code>Spawn&lt;T&gt;(after:, ...)</code><span>bring a new thing in</span></div>
+    <div class="chip"><code>Buy(from, units, at:)</code><span>pay at a market price</span></div>
+    <div class="chip"><code>Remove(entity)</code><span>take a thing out</span></div>
+  </div>
+  <p class="lede" style="margin-top:8px">Conditions combine with <code>&amp;</code> <code>|</code> <code>!</code>. On sets: <code>Where</code>, <code>Any</code>, <code>None</code>, <code>Count</code>, <code>Sum</code>, <code>Strongest</code>, <code>Weakest</code>, <code>Random()</code>. On values: <code>Is</code>, <code>Above</code>, <code>Below</code>, <code>AtLeast</code>, <code>AtFloor</code>, <code>Has(trait)</code>, <code>Doing(order)</code>. Add <code>.For(Weeks(n))</code> and a condition must hold that many turns in a row.</p>
+  <ul class="rules">
+    <li>Effects and involvement take one lambda returning one item or a list: <code>.Effect(t =&gt; [a, b, c])</code>.</li>
+    <li>Reading through nothing gives nothing, and a condition on nothing is false.</li>
+    <li>A relation never written reads as its declared default.</li>
+    <li>Illegal definitions fail to compile, or fail the checker with a message in game terms.</li>
+  </ul>
+</section>
+</main>
+</div>
+
+<script>
+(function () {
+  var kw = /^(public|static|readonly|sealed|class|private|new|var|return|this|true|false|null|internal)$/;
+  var re = /(\/\/[^\n]*|\/\*[\s\S]*?\*\/)|("(?:[^"\\\n]|\\.)*")|(\.[A-Z]\w*)|\b(\d[\d_.]*)\b|\b([A-Za-z_]\w*)\b/g;
+  function esc(s) { return s.replace(/&/g, "&amp;").replace(/</g, "&lt;").replace(/>/g, "&gt;"); }
+  function highlight(src) {
+    var out = "", last = 0, m;
+    re.lastIndex = 0;
+    while ((m = re.exec(src))) {
+      out += esc(src.slice(last, m.index));
+      var t = m[0], cls = null;
+      if (m[1]) cls = "c";
+      else if (m[2]) cls = "s";
+      else if (m[3]) { out += "." + '<span class="tok-m">' + esc(t.slice(1)) + "</span>"; last = re.lastIndex; continue; }
+      else if (m[4]) cls = "n";
+      else if (m[5]) cls = kw.test(t) ? "k" : (/^[A-Z]/.test(t) ? "t" : null);
+      out += cls ? '<span class="tok-' + cls + '">' + esc(t) + "</span>" : esc(t);
+      last = re.lastIndex;
+    }
+    return out + esc(src.slice(last));
+  }
+  document.querySelectorAll("script.snip").forEach(function (s) {
+    var pre = s.parentNode;
+    var code = document.createElement("code");
+    code.innerHTML = highlight(s.textContent.replace(/^\n+|\s+$/g, ""));
+    pre.replaceChild(code, s);
+  });
+})();
+</script>
+<script src="https://cdn.jsdelivr.net/npm/mermaid@10.9.1/dist/mermaid.min.js"></script>
+<script>mermaid.initialize({ startOnLoad: true, theme: "dark", securityLevel: "strict" });</script>
+</body>
+</html>

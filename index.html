@@ -1,34 +1,88 @@
-<!doctype html><html lang="en"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1"><meta name="theme-color" content="#0a121b"><meta name="description" content="Edit fixed-width input, trace every character to eKapital XML, and understand precisely how to repair errors."><title>eKapital — Your input, explained</title><link rel="stylesheet" href="lab.css"></head><body>
-<header><a class="brand" href="./"><span class="logo">e↗</span><span>eKapital<small>MAPPING LAB</small></span></a><div class="head-context"><i></i> YEAR-END 2026 <span>/</span> FF → XML</div><nav><a href="guide.html">Watch the overview ↗</a><button id="notes">Mapping assumptions</button></nav></header>
-<main>
-<section class="intro"><div><div class="eyebrow">CHANGE THE INPUT. SEE THE CONSEQUENCE.</div><h1>Your input, <em>explained.</em></h1><p>Edit the fixed-width record. Follow its values into XML. See exactly where an error starts—and how to fix it.</p></div><div class="product-picker"><label for="product">LOAD PRODUCT SAMPLE</label><select id="product"></select></div></section>
-<div class="scenario-bar"><span>TRY A CASE</span><div id="scenarios"></div><button id="reset" class="subtle">Reset this sample ↺</button></div>
-<div id="caseNote" class="case-note">Start by changing the interest amount. The same source value fills more than one XML element.</div>
-<section class="mapping-workspace">
- <article class="input-pane"><div class="pane-head"><div><span class="step">01</span><h2>What you wrote</h2></div><span class="format">FIXED-WIDTH INPUT</span></div>
- <div class="source-top"><span id="recordStatus"></span><div><button id="undo">Undo edit</button><button id="downloadFF">↓ FF</button></div></div>
- <label class="editor-label" for="record">Edit the complete record <span>spaces are significant · no separators</span></label>
- <textarea id="record" rows="3" wrap="off" spellcheck="false" autocomplete="off" autocapitalize="off" aria-describedby="recordHelp"></textarea>
- <p id="recordHelp" class="micro">Source FF: header followed by complete period groups.</p><div id="periodControls" class="period-controls"><button id="addPeriod">+ Add blank period</button><button id="removePeriod">Remove selected period</button></div>
- <div class="section-label">CHARACTER MAP <span id="characterScope">click a character to trace its field · · = a space</span></div>
- <div id="repeatGroups" class="repeat-groups" hidden aria-label="Embedded input groups"></div>
- <div class="char-scroll"><div id="characters" class="characters"></div></div>
- <div id="fieldList" class="field-list"></div>
- <section class="field-editor"><div class="section-label">EDIT ONE FIELD WITHOUT SHIFTING THE OTHERS</div><div class="field-heading"><h3 id="fieldName"></h3><span id="fieldRange"></span></div><div class="field-input-row"><input id="fieldValue" spellcheck="false" autocomplete="off" autocapitalize="off" aria-label="Raw selected field value"><button id="applyField" class="primary">Apply to input</button></div><div class="field-help"><span id="fieldLength"></span><button id="padField" class="link-button">Fill remaining positions</button></div><p id="rule"></p></section>
- <section id="errors" class="errors" aria-live="polite"></section>
- </article>
- <article class="output-pane"><div class="pane-head"><div><span class="step">02</span><h2>What this creates</h2></div><span class="format">XML OUTPUT</span></div>
- <div class="output-top"><div id="outputStatus" aria-live="polite"></div><button id="downloadXML">↓ XML file</button></div>
- <div id="outputMessage" class="output-message"></div>
- <section id="schemaErrors" class="schema-errors" aria-live="polite"></section><div class="xml-toolbar"><span><b class="legend-input"></b> from your FF <b class="legend-meta"></b> XML structure</span><button id="jumpOutput" class="link-button">Find selected field ↓</button></div>
- <div id="xml" class="xml-code" tabindex="0" aria-label="Generated XML; click a mapped element to locate its source"></div>
- <div id="changes" class="changes"></div>
- <details class="previous"><summary>Previous valid output <span>schema-valid comparison only</span></summary><pre id="previousXML"></pre></details>
- </article>
-</section>
-<section class="trace-section" aria-labelledby="traceTitle"><div class="trace-header"><div><div class="eyebrow">FOCUSED TRANSFORMATION</div><h2 id="traceTitle">How this field becomes XML</h2><p id="traceSummary" class="trace-summary"></p></div><span id="traceStatus" class="trace-status"></span></div><div id="traceDetails" class="trace-details"></div><div id="transformationExplanation" class="transformation-explanation"></div><div id="destinations" class="destinations"></div></section>
-<footer><span>Synthetic layouts · official 2026 XML structure, r28215 · no submission to SKAT</span><a href="guide.html">Original narrated process guide ↗</a></footer>
-</main>
-<dialog id="dialog"><div class="dialog-head"><h2>How this mapping lab works</h2><button id="closeDialog" aria-label="Close">✕</button></div><div id="notesText"></div></dialog><div id="notice" role="status" hidden></div>
-<script type="module" src="lab.js"></script></body></html>
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
+<meta name="description" content="Kaliffen's devlog: dated pages from the projects in progress.">
+<meta name="theme-color" content="#101418">
+<title>Kaliffen Devlog</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Instrument+Serif:ital@0;1&family=IBM+Plex+Sans:wght@400;500&family=JetBrains+Mono:wght@400&display=swap">
+<style>
+/* Layout: one narrow column; a dated log, newest first. */
+:root {
+  color-scheme: dark;
+  --bg: #101418;
+  --panel: #161c22;
+  --rule: #26303a;
+  --fg: #d9dfe4;
+  --muted: #8995a1;
+  --brass: #d1ab62;
+  --display: "Instrument Serif", "Iowan Old Style", Georgia, serif;
+  --body: "IBM Plex Sans", system-ui, -apple-system, "Segoe UI", sans-serif;
+  --mono: "JetBrains Mono", ui-monospace, Consolas, monospace;
+}
+* { box-sizing: border-box; }
+body { margin: 0; background: var(--bg); color: var(--fg); font: 15px/1.6 var(--body); }
+.wrap {
+  max-width: 760px;
+  margin: 0 auto;
+  padding-block: 64px 96px;
+  padding-left: max(16px, env(safe-area-inset-left, 0px));
+  padding-right: max(16px, env(safe-area-inset-right, 0px));
+  display: grid;
+  gap: 48px;
+}
+header { display: grid; gap: 12px; }
+.eyebrow { font-size: 11px; letter-spacing: .14em; text-transform: uppercase; color: var(--brass); }
+h1 { font: 400 clamp(44px, 8vw, 72px)/1 var(--display); margin: 0; }
+header p { margin: 0; color: var(--muted); max-width: 56ch; }
+ol { list-style: none; margin: 0; padding: 0; display: grid; }
+li { display: grid; grid-template-columns: 112px minmax(0, 1fr); gap: 20px; padding: 22px 0; border-top: 1px solid var(--rule); }
+li:last-child { border-bottom: 1px solid var(--rule); }
+time { font: 13px/1.9 var(--mono); color: var(--muted); font-variant-numeric: tabular-nums; }
+.entry { display: grid; gap: 6px; min-width: 0; }
+.entry h2 { margin: 0; font: 400 28px/1.15 var(--display); text-wrap: balance; }
+.entry h2 a { color: var(--fg); text-decoration: none; }
+.entry h2 a:hover, .entry h2 a:focus-visible { color: var(--brass); outline: none; }
+.entry p { margin: 0; color: var(--muted); max-width: 60ch; }
+.tags { display: flex; flex-wrap: wrap; gap: 8px; font-size: 12px; color: var(--muted); }
+.tags span { border: 1px solid var(--rule); border-radius: 3px; padding: 1px 8px; }
+.also { font-size: 13px; }
+.also a { color: var(--brass); }
+@media (max-width: 520px) {
+  li { grid-template-columns: minmax(0, 1fr); gap: 4px; }
+}
+</style>
+</head>
+<body>
+<div class="wrap">
+  <header>
+    <div class="eyebrow">kaliffen.github.io</div>
+    <h1>Devlog</h1>
+    <p>Pages from the projects in progress, newest first.</p>
+  </header>
 
+  <ol>
+    <li>
+      <time datetime="2026-10-30">2026-10-30</time>
+      <div class="entry">
+        <h2><a href="dsl-primer/">Game DSL Primer</a></h2>
+        <p>The core primitives of game-dsl: entities, flows, pressures, events, decisions, traits, concerns, endings and situations. Each one has a real snippet from Chicago, 1923, what it means, and a diagram.</p>
+        <div class="tags"><span>game-dsl</span><span>C#</span><span>tutorial</span></div>
+      </div>
+    </li>
+    <li>
+      <time datetime="2026-10-30">2026-10-30</time>
+      <div class="entry">
+        <h2><a href="ekapital/">eKapital mapping lab</a></h2>
+        <p>Edit synthetic fixed-width product records and inspect the resulting eKapital 2026 XML, with field-to-element tracing, validation explanations and targeted repairs.</p>
+        <p class="also">Also: <a href="ekapital/guide.html">the narrated overview</a>.</p>
+        <div class="tags"><span>eKapital</span><span>XML</span><span>lab</span></div>
+      </div>
+    </li>
+  </ol>
+</div>
+</body>
+</html>
