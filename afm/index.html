@@ -90,7 +90,7 @@ th { color: var(--muted); font-weight: 500; }
   </header>
 
   <div class="play">
-    <a class="btn" href="play/">Play it: two coaches, one screen</a>
+    <a class="btn" href="https://kaliffen.github.io/afm/">Play it: two coaches, one screen</a>
     <small>Hot-seat: the screen is passed between the coaches while markers are placed. Best on a laptop or desktop with a mouse. Drag to pan, wheel to zoom, <code>P</code> frames the play.</small>
   </div>
 
@@ -133,10 +133,10 @@ th { color: var(--muted); font-weight: 500; }
 
   <h2>Under the hood</h2>
   <p>The engine is a coroutine: the game yields a <em>decision</em> (who must decide what, with the options and constraints) and receives an <em>action</em>. Everything automatic between two decisions just happens. A game is therefore its dice seed plus its list of actions, which gives save, load, undo and replay for free, and lets a server run the engine and send each coach only the view that coach may see. The board is three.js, orthographic, in centimetres; the panels are Preact. The rules are covered by 232 tests organised by rulebook section, and an auto-coach plays whole games across every field size and game type to make sure nothing stalls.</p>
-  <p>The game runs on the same code with a Node server for online tables (two browsers, one table, hidden markers filtered on the server). This page is a static build, so it offers hot-seat play.</p>
+  <p>The game runs on the same code with a Node server for online tables (two browsers, one table, hidden markers filtered on the server). It lives at <a href="https://kaliffen.github.io/afm/">kaliffen.github.io/afm</a>, built from <a href="https://github.com/Kaliffen/afm">its own repository</a>; the static site offers hot-seat play.</p>
 
   <div class="play">
-    <a class="btn" href="play/">Open the table</a>
+    <a class="btn" href="https://kaliffen.github.io/afm/">Open the table</a>
     <small>Start with the red zone and college overtime, as the rulebook suggests for a first game.</small>
   </div>
 </div>
