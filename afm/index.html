@@ -1,0 +1,144 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
+<meta name="description" content="American Football: The Board Game, Community Edition, as a two-coach digital table you can play in the browser.">
+<meta name="theme-color" content="#101418">
+<title>A Digital Table for American Football: The Board Game</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Instrument+Serif:ital@0;1&family=IBM+Plex+Sans:wght@400;500;600&family=JetBrains+Mono:wght@400&display=swap">
+<style>
+/* One narrow column, dark, like the devlog index. The game itself opens in its own page. */
+:root {
+  color-scheme: dark;
+  --bg: #101418;
+  --panel: #161c22;
+  --rule: #26303a;
+  --fg: #d9dfe4;
+  --muted: #8995a1;
+  --brass: #d1ab62;
+  --teal: #6cc4b8;
+  --display: "Instrument Serif", "Iowan Old Style", Georgia, serif;
+  --body: "IBM Plex Sans", system-ui, -apple-system, "Segoe UI", sans-serif;
+  --mono: "JetBrains Mono", ui-monospace, Consolas, monospace;
+}
+* { box-sizing: border-box; }
+body { margin: 0; background: var(--bg); color: var(--fg); font: 15px/1.65 var(--body); }
+.wrap {
+  max-width: 760px;
+  margin: 0 auto;
+  padding-block: 56px 96px;
+  padding-left: max(16px, env(safe-area-inset-left, 0px));
+  padding-right: max(16px, env(safe-area-inset-right, 0px));
+  display: grid;
+  gap: 28px;
+}
+nav a { color: var(--muted); text-decoration: none; font-size: 13px; }
+nav a:hover { color: var(--brass); }
+header { display: grid; gap: 12px; }
+.eyebrow { font-size: 11px; letter-spacing: .14em; text-transform: uppercase; color: var(--brass); }
+h1 { font: 400 clamp(38px, 7vw, 60px)/1.05 var(--display); margin: 0; text-wrap: balance; }
+h2 { font: 400 28px/1.15 var(--display); margin: 28px 0 0; }
+header p.lede { margin: 0; color: var(--muted); max-width: 60ch; font-size: 16px; }
+time { font: 13px/1.9 var(--mono); color: var(--muted); }
+p { margin: 0; max-width: 64ch; }
+.play {
+  display: grid;
+  gap: 14px;
+  padding: 22px 24px;
+  background: var(--panel);
+  border: 1px solid var(--rule);
+  border-radius: 10px;
+}
+.play .btn {
+  justify-self: start;
+  display: inline-block;
+  padding: 12px 22px;
+  background: var(--brass);
+  color: #1a1400;
+  font-weight: 600;
+  text-decoration: none;
+  border-radius: 6px;
+}
+.play .btn:hover { background: #e0bd78; }
+.play small { color: var(--muted); }
+figure { margin: 0; display: grid; gap: 8px; }
+figure img { width: 100%; height: auto; border: 1px solid var(--rule); border-radius: 8px; display: block; }
+figcaption { font-size: 13px; color: var(--muted); }
+ul { margin: 0; padding-left: 20px; display: grid; gap: 6px; max-width: 64ch; }
+li::marker { color: var(--brass); }
+code { font: 13px var(--mono); color: var(--teal); }
+a { color: var(--brass); }
+.tags { display: flex; flex-wrap: wrap; gap: 8px; font-size: 12px; color: var(--muted); }
+.tags span { border: 1px solid var(--rule); border-radius: 3px; padding: 1px 8px; }
+table { border-collapse: collapse; font-size: 14px; }
+td, th { text-align: left; padding: 6px 14px 6px 0; border-bottom: 1px solid var(--rule); vertical-align: top; }
+th { color: var(--muted); font-weight: 500; }
+</style>
+</head>
+<body>
+<div class="wrap">
+  <nav><a href="../">← Devlog</a></nav>
+  <header>
+    <div class="eyebrow">game · rules engine · three.js</div>
+    <h1>A Digital Table for American Football: The Board Game</h1>
+    <time datetime="2026-11-01">2026-11-01</time>
+    <p class="lede">The Community Edition rulebook of <em>American Football: The Board Game</em>, played by two coaches on a 2D board in the browser: hidden markers, timeslices, dominance counters and every dice roll shown.</p>
+    <div class="tags"><span>american football</span><span>board game</span><span>TypeScript</span><span>three.js</span><span>hot-seat</span></div>
+  </header>
+
+  <div class="play">
+    <a class="btn" href="play/">Play it: two coaches, one screen</a>
+    <small>Hot-seat: the screen is passed between the coaches while markers are placed. Best on a laptop or desktop with a mouse. Drag to pan, wheel to zoom, <code>P</code> frames the play.</small>
+  </div>
+
+  <h2>What it is</h2>
+  <p><em>American Football: The Board Game</em> (SeriousName, 2017) is a two-player miniatures game in which a play is broken into four timeslices. Before the snap each coach places face-down markers behind every player: routes, cuts, blocks, hand-offs, reads for the quarterback; man, zone, spy or blitz for the defense. Then the timeslices are resolved one phase at a time with a d20 and a measuring tape, so the hidden plans collide on the table and nobody knows whether that blitz is real until the markers turn over.</p>
+  <p>This is that rulebook as a program. The whole Community Edition is in the engine: skillpoints and rosters, lining up, marker legality, the nine phases of a timeslice, pass and run blocking with the dominance counter, pushing around, pancakes and breaking through, hitting the hole, routes and the route check, man and zone coverage, passing with its read, range, pressure and movement modifiers, contested catches and interceptions, tackling, dragging tacklers, fumbles and the scramble, play action and draws, kick-offs, punts, field goals, tries, and the four game types on three field sizes.</p>
+
+  <figure>
+    <img src="pass.png" alt="The board at the pass decision: a dashed pass line from the quarterback to the read receiver, a 3 cm contest ring around him, the accuracy modifiers listed in the panel.">
+    <figcaption>Phase 9. The quarterback picks a receiver and sees the throw assembled: not the read, range group after ARM, defenders within 3 cm minus POISE, centimetres moved. The dashed ring is the receiver's 3 cm contest zone.</figcaption>
+  </figure>
+
+  <h2>How a play goes</h2>
+  <ul>
+    <li><strong>Line up.</strong> The offense first: five linemen touching on the line, the quarterback under centre or in the shotgun, the skill players anywhere behind the line. Pick a formation, drag anyone, substitute from the bench. Then the defense: at least three linemen and a linebacker.</li>
+    <li><strong>Markers.</strong> Four per offensive player, two per defender, placed behind a curtain. The validator refuses what the book forbids (a second cut, a continue with nothing to continue) and warns about what the book punishes (a hand-off with no matching running marker is a fumble).</li>
+    <li><strong>Timeslices.</strong> Defense reveals, offense reveals, free blockers move and designate, blocks are rolled, the ball carrier moves, blitzers and free defenders move, receivers run their routes with man coverage chasing each one, zones and spies settle, and finally the quarterback may throw. The play goes on past timeslice four until somebody is down.</li>
+    <li><strong>Everything measured.</strong> Bases are 25 mm, ten yards are 12 cm, distances are edge to edge. Moves are straight lines; the board shows the allowance circle, the direction a marker allows, where a path is blocked, and where a hole between two engaged linemen would need an AGILITY roll.</li>
+  </ul>
+
+  <figure>
+    <img src="push.png" alt="The push-around decision after a won block: sliders for push distance and turn angle, ghost tokens previewing the result, dominance badges between the engaged players.">
+    <figcaption>Phase 4. A defender won his pass rush roll by five and may push the blocker up to 2 cm back or turn him up to 45°. The ghost tokens preview the result; the numbered badges are the dominance counters.</figcaption>
+  </figure>
+
+  <figure>
+    <img src="breakthrough.png" alt="A defender who pancaked his blocker chooses where to stand in contact with him from a ring of red candidate spots.">
+    <figcaption>Dominance ten: the blocker is pancaked and the defender breaks through. He may stand anywhere in contact with the man he beat; the red spots are the legal places.</figcaption>
+  </figure>
+
+  <h2>Where the book is silent</h2>
+  <p>A rulebook written for a table assumes two people who can argue. Every place where the Community Edition is quiet, ambiguous or contradicts itself got a written ruling, tied to the page it interprets, and the implementation follows the ruling. A few that mattered:</p>
+  <table>
+    <tr><th>Hand-off timing</th><td>The hand-off is announced at the reveal and happens when the ball carrier moves: the quarterback may step to meet a deep back, then the runner must be within 3 cm or the ball is fumbled at his base. Run blocks are legal from phase 3 of that timeslice.</td></tr>
+    <tr><th>Holes</th><td>A hole is a gap between two engaged players of at least 1 cm but narrower than a base. A wider gap needs no roll; aiming through an engaged base is simply blocked.</td></tr>
+    <tr><th>Play action</th><td>Until the quarterback's next marker shows, the defense sees the back with the ball and reacts as if it were in play. A tackle on the decoy reveals the fake.</td></tr>
+    <tr><th>Pancake margins</th><td>Read literally: pass blocking at ±10; run blocking at −10 for the defender and more than 10 for the blocker. Two perfects cancel.</td></tr>
+    <tr><th>Loose balls</th><td>When nobody comes up with a fumble the next timeslice is a loose-ball timeslice: both coaches move towards it, everyone within 5 cm rolls again. A ball nobody can reach is dead with the team that last had it.</td></tr>
+  </table>
+
+  <h2>Under the hood</h2>
+  <p>The engine is a coroutine: the game yields a <em>decision</em> (who must decide what, with the options and constraints) and receives an <em>action</em>. Everything automatic between two decisions just happens. A game is therefore its dice seed plus its list of actions, which gives save, load, undo and replay for free, and lets a server run the engine and send each coach only the view that coach may see. The board is three.js, orthographic, in centimetres; the panels are Preact. The rules are covered by 232 tests organised by rulebook section, and an auto-coach plays whole games across every field size and game type to make sure nothing stalls.</p>
+  <p>The game runs on the same code with a Node server for online tables (two browsers, one table, hidden markers filtered on the server). This page is a static build, so it offers hot-seat play.</p>
+
+  <div class="play">
+    <a class="btn" href="play/">Open the table</a>
+    <small>Start with the red zone and college overtime, as the rulebook suggests for a first game.</small>
+  </div>
+</div>
+</body>
+</html>
