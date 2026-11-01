@@ -1,0 +1,137 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
+<meta name="description" content="Calling plays in American Football: The Board Game: a route library, a stock playbook, a play creator with the routes drawn on the field, and your own playbooks.">
+<meta name="theme-color" content="#101418">
+<title>Calling Plays: Routes, a Play Creator and Playbooks</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Instrument+Serif:ital@0;1&family=IBM+Plex+Sans:wght@400;500;600&family=JetBrains+Mono:wght@400&display=swap">
+<style>
+/* One narrow column, dark, like the devlog index. The game itself opens in its own page. */
+:root {
+  color-scheme: dark;
+  --bg: #101418;
+  --panel: #161c22;
+  --rule: #26303a;
+  --fg: #d9dfe4;
+  --muted: #8995a1;
+  --brass: #d1ab62;
+  --teal: #6cc4b8;
+  --display: "Instrument Serif", "Iowan Old Style", Georgia, serif;
+  --body: "IBM Plex Sans", system-ui, -apple-system, "Segoe UI", sans-serif;
+  --mono: "JetBrains Mono", ui-monospace, Consolas, monospace;
+}
+* { box-sizing: border-box; }
+body { margin: 0; background: var(--bg); color: var(--fg); font: 15px/1.65 var(--body); }
+.wrap {
+  max-width: 760px;
+  margin: 0 auto;
+  padding-block: 56px 96px;
+  padding-left: max(16px, env(safe-area-inset-left, 0px));
+  padding-right: max(16px, env(safe-area-inset-right, 0px));
+  display: grid;
+  gap: 28px;
+}
+nav a { color: var(--muted); text-decoration: none; font-size: 13px; }
+nav a:hover { color: var(--brass); }
+header { display: grid; gap: 12px; }
+.eyebrow { font-size: 11px; letter-spacing: .14em; text-transform: uppercase; color: var(--brass); }
+h1 { font: 400 clamp(38px, 7vw, 60px)/1.05 var(--display); margin: 0; text-wrap: balance; }
+h2 { font: 400 28px/1.15 var(--display); margin: 28px 0 0; }
+header p.lede { margin: 0; color: var(--muted); max-width: 60ch; font-size: 16px; }
+time { font: 13px/1.9 var(--mono); color: var(--muted); }
+p { margin: 0; max-width: 64ch; }
+.play {
+  display: grid;
+  gap: 14px;
+  padding: 22px 24px;
+  background: var(--panel);
+  border: 1px solid var(--rule);
+  border-radius: 10px;
+}
+.play .btn {
+  justify-self: start;
+  display: inline-block;
+  padding: 12px 22px;
+  background: var(--brass);
+  color: #1a1400;
+  font-weight: 600;
+  text-decoration: none;
+  border-radius: 6px;
+}
+.play .btn:hover { background: #e0bd78; }
+.play small { color: var(--muted); }
+figure { margin: 0; display: grid; gap: 8px; }
+figure img { width: 100%; height: auto; border: 1px solid var(--rule); border-radius: 8px; display: block; }
+figcaption { font-size: 13px; color: var(--muted); }
+ul { margin: 0; padding-left: 20px; display: grid; gap: 6px; max-width: 64ch; }
+li::marker { color: var(--brass); }
+code { font: 13px var(--mono); color: var(--teal); }
+a { color: var(--brass); }
+.tags { display: flex; flex-wrap: wrap; gap: 8px; font-size: 12px; color: var(--muted); }
+.tags span { border: 1px solid var(--rule); border-radius: 3px; padding: 1px 8px; }
+table { border-collapse: collapse; font-size: 14px; }
+td, th { text-align: left; padding: 6px 14px 6px 0; border-bottom: 1px solid var(--rule); vertical-align: top; }
+th { color: var(--muted); font-weight: 500; }
+</style>
+</head>
+<body>
+<div class="wrap">
+  <nav><a href="../../">← Devlog</a> · <a href="../">The digital table</a></nav>
+  <header>
+    <div class="eyebrow">game · playbook · three.js</div>
+    <h1>Calling Plays: Routes, a Play Creator and Playbooks</h1>
+    <time datetime="2026-11-01">2026-11-01</time>
+    <p class="lede">Placing forty-four markers by hand every snap was the one thing the digital table did worse than the real one. Now a coach calls a play by name, sees every route drawn on the field, and adjusts a player with a click.</p>
+    <div class="tags"><span>american football</span><span>board game</span><span>TypeScript</span><span>three.js</span><span>hot-seat</span></div>
+  </header>
+
+  <div class="play">
+    <a class="btn" href="../play/">Open the table</a>
+    <small>The play creator is on the start screen. At the table, the lineup and marker steps have a play dropdown. Hot-seat on this page.</small>
+  </div>
+
+  <h2>Routes as markers</h2>
+  <p>The rule creator's design note was short: look at the route diagrams of college and pro football, rebuild each route from the game's own markers, ignore fillers (a route ends with its cut, and the receiver keeps running on that line), and allow only four shapes: <code>[Cut]</code>, <code>[direction][Cut]</code>, <code>[direction][direction][Cut]</code>, <code>[direction][direction][direction][Cut]</code>. A direction is UP, an angle, CONTINUE or DELAY.</p>
+  <p>That gives a library of forty-one named routes: the route tree (flat, slant, out, drag, comeback, dig, corner, post, go), the quick game (hitch, stick, arrow, shallow), the double moves (sluggo, out and up, post-corner, whip), the backfield routes (swing, angle, wheel, check release) and the delays and screens. Angles and cuts are written towards the middle or the sideline and resolve to LEFT or RIGHT for whichever side the receiver lines up on, so a slant is one entry, not two.</p>
+  <p>Every route carries the direction a coach would take at the cut. The engine lets him pick any direction inside the cut's sector when the receiver moves, so a post and a dig are the same four markers; what differs is where the coach breaks. The board draws that: the path at the receiver's own SPEED, half in timeslice 1 and full after, a dot at the end of each timeslice, a ring at the cut, and a dashed line beyond the markers where the play goes on.</p>
+
+  <figure>
+    <img src="creator.png" alt="The play creator: Mesh in a shotgun spread against a 4-3, every route drawn on the field with a callout naming it, the player list on the left and the play's name and description on the right.">
+    <figcaption>The play creator with Mesh loaded. The two slots cross just beyond the line, a corner and a curl outside, the back on an angle. Each route is a ribbon with a tick per timeslice and a ring at the cut, named by a callout.</figcaption>
+  </figure>
+
+  <h2>Plays and the stock playbook</h2>
+  <p>A play is a formation with a marker set for every slot. Laying it on the field is a matching problem: the quarterback and linemen take theirs, everyone else takes the nearest slot by where he stands, so a dragged or substituted player gets the markers of the spot he is in. Read and hand-off targets inside a play name slots, not players, and become players when the play is laid down. A play flips left to right with one button.</p>
+  <p>The stock playbook has thirty-six offensive plays (Four Verticals, Mesh, Smash, Flood, Stick, Levels, Dagger, Drive, Post-Wheel, Y-Cross, Iso, Power, Toss, Counter, Draw, inside and outside zone, screens, play action) and eighteen defensive calls (Cover 1 to 4, Cover 0, Tampa 2, a fire zone, a show blitz that drops in timeslice 2, nickel, dime, goal line, prevent). Every one is tested legal for both teams, with no stray fumble warnings.</p>
+
+  <figure>
+    <img src="call.png" alt="The marker step at the table with Flood loaded: the sail, go and flat drawn on the right, the backside receiver's menu open and his route changed to a slant, the other routes faded.">
+    <figcaption>At the table. Flood is called, its markers are loaded, and the backside receiver's menu is open: his dig became a slant from the route dropdown, and the other routes fade while he is selected.</figcaption>
+  </figure>
+
+  <h2>At the table</h2>
+  <ul>
+    <li><strong>Lineup.</strong> The play dropdown lists every playbook. Calling a play lines its formation up. Online, its routes are drawn at once; in hot-seat the other coach shares the screen and no curtain hides the lineup step, so the play only shows as "called" until the marker step.</li>
+    <li><strong>Markers.</strong> Behind the curtain the play's markers are in place and every route is on the field. Click a player, in the list or on the board, and his marker menu opens: a route dropdown for receivers and backs, and the full marker buttons for anything else. What ends up on the field can be saved as a custom play.</li>
+    <li><strong>Playbooks.</strong> The play creator makes playbooks and fills them with stock and custom plays, in the order you want to see them on game day. They live in the browser and export to JSON.</li>
+  </ul>
+
+  <figure>
+    <img src="defense.png" alt="The play creator on defense: Cover 3 in a 4-3 against an I formation, the zones shaded on the field with their names, blitz arrows from the four linemen, the player list showing each defender's assignment.">
+    <figcaption>Defense in the creator: Cover 3. Zones are shaded where the rulebook puts them relative to the line, blitzers get an arrow, and the list reads the call in words.</figcaption>
+  </figure>
+
+  <h2>Under the hood</h2>
+  <p>The route library and the plays are engine code with no dependency on the UI, so the route preview is the same arithmetic the engine uses for the receiver's move: the allowance by timeslice, the cut sectors, the run lanes measured from the linemen's bases, the sideline stop. The previews are an overlay on the existing orthographic three.js board, a group of quads and sprites rebuilt whenever the draft changes. Twenty-three new tests cover the library's legality, the breaks inside their sectors, the nearest-slot matching, flipping and the round trip from field to play and back.</p>
+
+  <div class="play">
+    <a class="btn" href="../play/">Open the table</a>
+    <small>Try the play creator first, then call Mesh against Cover 2 in a hot-seat game.</small>
+  </div>
+</div>
+</body>
+</html>
